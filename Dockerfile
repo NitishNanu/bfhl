@@ -9,7 +9,10 @@ COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Download dependencies (cache)
+# FIX: give execute permission to mvnw
+RUN chmod +x mvnw
+
+# Download dependencies
 RUN ./mvnw dependency:go-offline
 
 # Copy source code
