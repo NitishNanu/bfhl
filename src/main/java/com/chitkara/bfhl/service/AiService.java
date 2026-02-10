@@ -15,11 +15,10 @@ public class AiService {
     private String apiKey;
 
     private static final String GEMINI_URL =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=";
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
 
     public String getAnswer(String question) {
 
-        // 🔍 LOG API KEY STATUS (Render logs)
         System.out.println("GEMINI_API_KEY loaded: " + (!apiKey.isEmpty()));
 
         if (apiKey == null || apiKey.isEmpty()) {
@@ -59,12 +58,9 @@ public class AiService {
             List<Map> parts =
                 (List<Map>) content.get("parts");
 
-            String text = parts.get(0).get("text").toString();
-
-            return text.trim();
+            return parts.get(0).get("text").toString().trim();
 
         } catch (Exception e) {
-            // 🔴 THIS WILL SHOW REAL ERROR IN RENDER LOGS
             e.printStackTrace();
             return "Unknown";
         }
