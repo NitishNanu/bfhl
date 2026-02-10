@@ -12,8 +12,7 @@ public class BfhlService {
     public Object process(Map<String, Object> input, AiService aiService) {
 
         if (input.containsKey("fibonacci")) {
-            Integer n = (Integer) input.get("fibonacci");
-            return MathUtils.fibonacci(n);
+            return MathUtils.fibonacci((Integer) input.get("fibonacci"));
         }
 
         if (input.containsKey("prime")) {

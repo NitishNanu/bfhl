@@ -3,7 +3,6 @@ package com.chitkara.bfhl.controller;
 import com.chitkara.bfhl.dto.ApiResponse;
 import com.chitkara.bfhl.service.AiService;
 import com.chitkara.bfhl.service.BfhlService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -22,13 +21,13 @@ public class BfhlController {
     }
 
     @PostMapping("/bfhl")
-    public ResponseEntity<ApiResponse<?>> bfhl(@RequestBody Map<String, Object> input) {
+    public ApiResponse<?> bfhl(@RequestBody Map<String, Object> input) {
         Object result = bfhlService.process(input, aiService);
-        return ResponseEntity.ok(new ApiResponse<>(true, EMAIL, result));
+        return new ApiResponse<>(true, result, EMAIL);
     }
 
     @GetMapping("/health")
-    public ResponseEntity<ApiResponse<?>> health() {
-        return ResponseEntity.ok(new ApiResponse<>(true, EMAIL, null));
+    public ApiResponse<?> health() {
+        return new ApiResponse<>(true, null, EMAIL);
     }
 }

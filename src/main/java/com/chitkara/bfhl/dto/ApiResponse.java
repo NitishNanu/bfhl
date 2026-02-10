@@ -1,25 +1,26 @@
 package com.chitkara.bfhl.dto;
 
 public class ApiResponse<T> {
-	private boolean is_success;
-	private String official_email;
-	private T data;
-	
-	public ApiResponse(boolean is_success,String official_email,T data) {
-		this.is_success = is_success;
-		this.official_email = official_email;
-		this.data = data;
-	}
-	
-	public boolean isIs_success() {
-		return is_success;
-	}
-	
-	public String getOffical_email() {
-		return official_email;
-	}
-	
-	public T getData() {
-		return data;
-	}
+
+    private boolean is_success;
+    private T data;
+    private String offical_email;
+
+    public ApiResponse(boolean is_success, T data, String offical_email) {
+        this.is_success = is_success;
+        this.data = data;
+        this.offical_email = offical_email;
+    }
+
+    public boolean isIs_success() {
+        return is_success;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public String getOffical_email() {
+        return offical_email;
+    }
 }

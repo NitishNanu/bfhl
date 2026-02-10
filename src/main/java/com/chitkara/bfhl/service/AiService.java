@@ -1,6 +1,7 @@
 package com.chitkara.bfhl.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,44 +14,58 @@ public class AiService {
     @Value("${GEMINI_API_KEY:}")
     private String apiKey;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private static final String GEMINI_URL =
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=";
 
     public String getAnswer(String question) {
+
+        // 🔍 LOG API KEY STATUS (Render logs)
+        System.out.println("GEMINI_API_KEY loaded: " + (!apiKey.isEmpty()));
 
         if (apiKey == null || apiKey.isEmpty()) {
             return "Unknown";
         }
 
-        String url =
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key="
-                        + apiKey;
-
-        Map<String, Object> body = Map.of(
-                "contents", List.of(
-                        Map.of("parts", List.of(
-                                Map.of("text", question + ". Answer in ONE WORD only.")
-                        ))
-                )
-        );
-
         try {
-            Map<String, Object> response =
-                    restTemplate.postForObject(url, body, Map.class);
+            RestTemplate restTemplate = new RestTemplate();
 
-            List<Map<String, Object>> candidates =
-                    (List<Map<String, Object>>) response.get("candidates");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            Map<String, Object> content =
-                    (Map<String, Object>) candidates.get(0).get("content");
+            Map<String, Object> body = Map.of(
+                "contents", List.of(
+                    Map.of("parts", List.of(
+                        Map.of("text", question)
+                    ))
+                )
+            );
 
-            List<Map<String, Object>> parts =
-                    (List<Map<String, Object>>) content.get("parts");
+            HttpEntity<Map<String, Object>> entity =
+                new HttpEntity<>(body, headers);
 
-            String text = (String) parts.get(0).get("text");
+            ResponseEntity<Map> response =
+                restTemplate.postForEntity(
+                    GEMINI_URL + apiKey,
+                    entity,
+                    Map.class
+                );
 
-            return text.replaceAll("[^A-Za-z]", "").split(" ")[0];
+            List<Map> candidates =
+                (List<Map>) response.getBody().get("candidates");
+
+            Map content =
+                (Map) candidates.get(0).get("content");
+
+            List<Map> parts =
+                (List<Map>) content.get("parts");
+
+            String text = parts.get(0).get("text").toString();
+
+            return text.trim();
 
         } catch (Exception e) {
+            // 🔴 THIS WILL SHOW REAL ERROR IN RENDER LOGS
+            e.printStackTrace();
             return "Unknown";
         }
     }
